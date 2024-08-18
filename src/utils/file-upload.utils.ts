@@ -49,6 +49,7 @@ export async function deleteImage(param: DeleteParams): Promise<boolean> {
     await s3Client.send(new DeleteObjectCommand(param));
     return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 }

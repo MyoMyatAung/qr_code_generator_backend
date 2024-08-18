@@ -11,7 +11,7 @@ qrRouter.get('/:_id', validateJson(getQRByDocIdSchema), getQRByIdHandler);
 qrRouter.patch('/scan/:_id', validateJson(scanQrSchema), scanQRHandler);
 qrRouter.patch('/toggle-status/:_id', validateJson(toggleStatusQRSchema), toggleStatusQRHandler);
 qrRouter.post("/", upload.single("data"), validateFormData(createQRSchema), createQRHandler);
-qrRouter.put('/:_id', validateJson(updateQRSchema), updateQRHandler);
+qrRouter.put('/:_id', upload.single("data"), validateFormData(updateQRSchema), updateQRHandler);
 qrRouter.delete('/:_id', validateJson(deleteQRSchema), deleteQRHandler);
 
 export default qrRouter;
