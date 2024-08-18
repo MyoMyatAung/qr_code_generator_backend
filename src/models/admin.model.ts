@@ -10,7 +10,6 @@ export interface AdminInput {
 }
 
 export interface AdminDocument extends AdminInput, mongoose.Document {
-    id: string;
     createdAt: Date;
     updatedAt: Date;
     comparePassword(inputPassword: string): Promise<Boolean>;

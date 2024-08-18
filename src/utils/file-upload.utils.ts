@@ -6,7 +6,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { DefaultConfig } from "../lib";
+import { DefaultConfig } from "../libs";
 
 export type UploadParams = {
   Bucket: string;
@@ -29,7 +29,7 @@ const s3Client = new S3Client({
   }
 });
 
-export async function uploadImage(param: UploadParams): Promise<{ success: boolean, url?: string, key?: string, error?: unknown }> {
+export async function upload(param: UploadParams): Promise<{ success: boolean, url?: string, key?: string, error?: unknown }> {
   try {
     const [res, region] = await Promise.all([
       s3Client.send(
@@ -53,9 +53,9 @@ export async function deleteImage(param: DeleteParams): Promise<boolean> {
   }
 }
 
-export const getImage = async (key: string) => {
+export const getImage = async (key: string, bucket: string) => {
   const command = new GetObjectCommand({
-    Bucket: config.get<string>(DefaultConfig.COURSE_IMG_BUCKET_NAME),
+    Bucket: config.get<string>(bucket),
     Key: key,
   });
 
@@ -66,10 +66,10 @@ export const getImage = async (key: string) => {
     }
     // The Body object also has 'transformToByteArray' and 'transformToWebStream' methods.
     const str = await response.Body.transformToString("base64");
-    return str;
+    return { base64: str, contentType: response.ContentType };
   } catch (err) {
     throw err;
   }
 };
 
-export default uploadImage;
+export default upload;

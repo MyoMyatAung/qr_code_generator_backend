@@ -9,7 +9,7 @@ const fileFilter = (
   file: Express.Multer.File,
   cb: FileFilterCallback
 ) => {
-  const fileTypes = /jpeg|jpg|png/;
+  const fileTypes = /jpeg|jpg|png|pdf/;
   const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
   const mimeType = fileTypes.test(file.mimetype);
 

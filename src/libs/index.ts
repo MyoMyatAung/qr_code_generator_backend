@@ -62,8 +62,16 @@ export enum DefaultConfig {
     REFRESH_TOKEN_TTL = "refreshTokenTtl",
     PUBLIC_KEY = "publicKey",
     PRIVATE_KEY = "privateKey",
-    COURSE_IMG_BUCKET_NAME = "courseImgBucketName",
+    QR_BUCKET = "qrBucket",
+    QR_MEIDA_BUCKET = "qrMediaBucket",
     AWS_ACCESS_KEY = "awsAccessKey",
     AWS_SECRET_ACCESS_KEY = "awsSecretAccessKey",
     REGION = "region",
+}
+
+export enum QRType {
+    WEBSITE = "WEBSITE",
+    V_CARD = "V_CARD",
+    PDF = "PDF",
+    IMAGE = "IMAGE"
 }
