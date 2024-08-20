@@ -11,6 +11,10 @@ const params = object({
   _id: string({ required_error: "qr id is required" }),
 });
 
+const qrIdParams = object({
+  qrId: string({ required_error: "qr id is required" }),
+});
+
 // Body schema
 const body = {
   body: object({
@@ -58,11 +62,13 @@ export const toggleStatusQRSchema = object({
   body: object({ status: boolean({ required_error: "status is required" }) }),
 });
 
-export const scanQrSchema = object({ params });
+export const scanQrSchema = object({ params: qrIdParams });
 
 export const deleteQRSchema = object({ params });
 
 export const getQRByDocIdSchema = object({ params });
+
+export const getQRByDocQrIdSchema = object({ params: qrIdParams });
 
 export const getQRQuerySchema = object({ ...query });
 
@@ -77,5 +83,7 @@ export type ScanQRInput = TypeOf<typeof scanQrSchema>;
 export type DeleteQRInput = TypeOf<typeof deleteQRSchema>;
 
 export type GetQRByDocIdInput = TypeOf<typeof getQRByDocIdSchema>;
+
+export type GetQRByDocQrIdInput = TypeOf<typeof getQRByDocQrIdSchema>;
 
 export type GetQRQueryInput = TypeOf<typeof getQRQuerySchema>;

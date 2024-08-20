@@ -62,6 +62,11 @@ const qrSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    qrId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     type: {
       type: String,
       enum: [QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.WEBSITE],

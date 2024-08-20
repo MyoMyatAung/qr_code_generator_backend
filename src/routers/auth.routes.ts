@@ -8,7 +8,7 @@ const authRouter = Router();
 /**
  * AMIN AUTHENTICATION
  */
-authRouter.post('/admins/sign-in', validateJson(adminSigninSchema), adminSignInHandler);
-authRouter.get('/admins/me', adminGetMeHandler);
+authRouter.post('/sign-in', validateJson(adminSigninSchema), adminSignInHandler);
+authRouter.get('/me', adminGetMeHandler);
 
 export default authRouter;

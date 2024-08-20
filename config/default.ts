@@ -14,4 +14,5 @@ export default {
   awsAccessKey: process.env.AWS_ACCESS_KEY,
   awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.REGION,
+  frontEndUrl: process.env.FRONT_END_URL,
 };

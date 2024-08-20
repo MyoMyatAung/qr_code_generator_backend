@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { CreateQRInput, DeleteQRInput, GetQRByDocIdInput, GetQRQueryInput, ScanQRInput, ToggleStatusQRInput, UpdateQRInput } from "../schemas/qr.schema";
+import { CreateQRInput, DeleteQRInput, GetQRByDocIdInput, GetQRByDocQrIdInput, GetQRQueryInput, ScanQRInput, ToggleStatusQRInput, UpdateQRInput } from "../schemas/qr.schema";
 import { countQR, createQR, deleteQR, findQRs, updateQR } from "../services/qr.service";
 import { errorResponse, successResponse } from "../utils/responses.utils";
 import { DefaultConfig, HTTP_MESSAGES, HTTP_STATUS, QRType } from "../libs";
 import { QRDoc, QRInput } from "../models/qr.model";
-import upload, { deleteImage, DeleteParams, UploadParams } from "../utils/file-upload.utils";
 
 import config from "config";
 import { generateQRCode } from "../utils/index.utils";
@@ -18,7 +17,7 @@ import { deleteFromS3, uploadToS3 } from "../utils/qr.utils";
 export async function createQRHandler(req: Request<{}, {}, CreateQRInput["body"]>, res: Response): Promise<Response<any>> {
   try {
     const qrId = generateUniqueID();
-    const qrBuffer = await generateQRCode(`http://localhost:3000/${qrId}`);
+    const qrBuffer = await generateQRCode(`${config.get<string>(DefaultConfig.FRONT_END_URL)}/${qrId}`);
 
     const qr = await uploadToS3(
       config.get<string>(DefaultConfig.QR_BUCKET),
@@ -102,6 +101,28 @@ export async function getQRHandler(req: Request<{}, {}, {}, GetQRQueryInput["fil
  * @GET /api/v1/qr/:id
  */
 export async function getQRByIdHandler(req: Request<GetQRByDocIdInput["params"]>, res: Response): Promise<Response<any>> {
+  try {
+    const qr = await findQRs(req.params);
+
+    if (!qr.length) {
+      return errorResponse(res, HTTP_STATUS.NOT_FOUND, HTTP_MESSAGES.NOT_FOUND, {
+        message: "QR not found!",
+      });
+    }
+
+    return successResponse<QRDoc>(res, HTTP_STATUS.OK, HTTP_MESSAGES.OK, {}, qr[0]);
+  } catch (error) {
+    console.error(error);
+    return errorResponse(res, HTTP_STATUS.INTERNAL_SERVER_ERROR, HTTP_MESSAGES.INTERNAL_SERVER_ERROR, {
+      message: "Something went wrong!",
+    });
+  }
+}
+
+/**
+ * @GET /api/v1/qr/:qrId
+ */
+export async function getQRByQrIdHandler(req: Request<GetQRByDocQrIdInput["params"]>, res: Response): Promise<Response<any>> {
   try {
     const qr = await findQRs(req.params);
 

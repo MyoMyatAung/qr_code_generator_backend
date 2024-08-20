@@ -4,9 +4,9 @@ import { handleError } from "../utils/index.utils";
 
 export async function createQR(input: QRInput): Promise<QRDoc> {
   try {
-      return await QRModel.create(input);
+    return await QRModel.create(input);
   } catch (error: unknown) {
-      handleError(error);
+    handleError(error);
   }
 }
 
@@ -16,24 +16,24 @@ export async function countQR(query?: FilterQuery<QRDoc>): Promise<number> {
 
 export async function findQRs(query?: FilterQuery<QRDoc>, projection?: ProjectionFields<QRDoc>, options: QueryOptions = { lean: true }): Promise<Array<QRDoc>> {
   try {
-      return await QRModel.find({ ...query } || {}, projection, options);
+    return await QRModel.find({ ...query } || {}, projection, options).populate(["createdBy", "updatedBy"]);
   } catch (error: unknown) {
-      handleError(error);
+    handleError(error);
   }
 }
 
 export async function updateQR(query: FilterQuery<QRDoc>, update: UpdateQuery<QRDoc>, options: QueryOptions = { new: true }): Promise<QRDoc | null> {
   try {
-      return await QRModel.findOneAndUpdate(query, { ...update }, options);
+    return await QRModel.findOneAndUpdate(query, { ...update }, options);
   } catch (error: unknown) {
-      handleError(error);
+    handleError(error);
   }
 }
 
 export async function deleteQR(query: FilterQuery<QRDoc>, options: QueryOptions = { new: true }): Promise<QRDoc | null> {
   try {
-      return await QRModel.findOneAndDelete(query, options);
+    return await QRModel.findOneAndDelete(query, options);
   } catch (error: unknown) {
-      handleError(error);
+    handleError(error);
   }
 }

@@ -23,8 +23,8 @@ export async function createAdminHandler(req: Request<CreateAdminInput["body"]>,
  */
 export async function getAdminHandler(req: Request<{}, {}, {}, GetAdminQueryInput["filter"] & GetAdminQueryInput["paginate"]>, res: Response): Promise<Response<any, Record<string, any>>> {
     try {
-        const { page = 0, limit = 10, ...filter } = req.query;
-        const skip = page * limit;
+        const { page = 1, limit = 10, ...filter } = req.query;
+        const skip = (page - 1) * limit;
         const admins = await findAdmins(filter, {}, { skip, limit });
         const total = await coundAdmin(filter);
         const totalPage = Math.ceil(total / limit);

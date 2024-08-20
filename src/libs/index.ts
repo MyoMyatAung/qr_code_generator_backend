@@ -67,6 +67,7 @@ export enum DefaultConfig {
     AWS_ACCESS_KEY = "awsAccessKey",
     AWS_SECRET_ACCESS_KEY = "awsSecretAccessKey",
     REGION = "region",
+    FRONT_END_URL = "frontEndUrl",
 }
 
 export enum QRType {
