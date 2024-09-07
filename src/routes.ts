@@ -20,7 +20,7 @@ function routes(app: Express) {
 
     app.use("/api/v1/admins", requiredUser, adminRouter);
 
-    app.use("/api/v1/qr", requiredUser, qrRouter);
+    app.use("/api/v1/qr", qrRouter);
 }
 
 export default routes;
