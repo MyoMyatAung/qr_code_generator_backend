@@ -16,7 +16,7 @@ export async function countQR(query?: FilterQuery<QRDoc>): Promise<number> {
 
 export async function findQRs(query?: FilterQuery<QRDoc>, projection?: ProjectionFields<QRDoc>, options: QueryOptions = { lean: true }): Promise<Array<QRDoc>> {
   try {
-    return await QRModel.find({ ...query } || {}, projection, options).populate(["createdBy", "updatedBy"]);
+    return await QRModel.find({ ...query } || {}, projection, options).populate(["createdBy", "updatedBy"]).sort({ createdAt: -1 });
   } catch (error: unknown) {
     handleError(error);
   }

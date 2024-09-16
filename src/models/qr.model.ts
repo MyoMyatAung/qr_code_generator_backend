@@ -24,6 +24,10 @@ export interface Employee {
   job: string;
   address: string;
   summary: string;
+  media?: {
+    url: string;
+    key: string;
+  };
 }
 
 export interface Media {
