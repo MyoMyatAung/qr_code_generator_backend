@@ -132,6 +132,12 @@ export async function getQRByQrIdHandler(req: Request<GetQRByDocQrIdInput["param
       });
     }
 
+    if(!qr[0].status){
+      return errorResponse(res, HTTP_STATUS.NOT_FOUND, HTTP_MESSAGES.NOT_FOUND, {
+        message: "QR is paused!",
+      });
+    }
+
     return successResponse<QRDoc>(res, HTTP_STATUS.OK, HTTP_MESSAGES.OK, {}, qr[0]);
   } catch (error) {
     console.error(error);
@@ -212,6 +218,13 @@ export async function scanQRHandler(req: Request<ScanQRInput["params"]>, res: Re
     }
 
     const qr = qrs[0];
+
+    if(!qr.status) {
+      return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
+        message: "Invalid QR!",
+      });
+    }
+
     qr.scanCount += 1;
 
     const today = new Date().toISOString().split("T")[0];

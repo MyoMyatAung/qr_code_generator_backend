@@ -1,5 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode";
+import { createCanvas, loadImage } from 'canvas';
+import path from 'path';
+
 export function generateUUID(): string {
   return uuidv4()
 }
@@ -24,8 +27,27 @@ export function handleError(error: unknown): never {
 
 export async function generateQRCode(url: string): Promise<Buffer> {
   try {
-    return await QRCode.toBuffer(url);
+    const canvas = createCanvas(150, 150);
+    QRCode.toCanvas(
+      canvas,
+      url,
+      {
+        errorCorrectionLevel: "H",
+        margin: 1,
+        color: {
+          dark: "#000000",
+          light: "#ffffff",
+        },
+      }
+    );
+    const ctx = canvas.getContext("2d");
+    const logoPath = path.resolve(__dirname, '../assets/logo.jpg');
+    const img = await loadImage(logoPath);
+    const center = (150 - 50) / 2;
+    ctx.drawImage(img, center, center, 50, 50);
+    return canvas.toBuffer("image/png");
   } catch (error) {
+    console.error(error);
     throw new Error('Failed to generate QR code');
   }
 }
