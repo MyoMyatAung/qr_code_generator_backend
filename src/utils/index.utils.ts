@@ -41,7 +41,7 @@ export async function generateQRCode(url: string): Promise<Buffer> {
       }
     );
     const ctx = canvas.getContext("2d");
-    const logoPath = path.resolve(__dirname, '../assets/logo.jpg');
+    const logoPath = path.resolve(__dirname, '../public/logo.jpg');
     const img = await loadImage(logoPath);
     const center = (150 - 50) / 2;
     ctx.drawImage(img, center, center, 50, 50);
