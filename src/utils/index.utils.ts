@@ -44,7 +44,7 @@ export async function generateQRCode(url: string): Promise<Buffer> {
     const logoPath = path.resolve(__dirname, '../public/logo.jpg');
     const img = await loadImage(logoPath);
     const center = (150 - 50) / 2;
-    ctx.drawImage(img, center, center, 50, 50);
+    ctx.drawImage(img, center, center, 40, 40);
     return canvas.toBuffer("image/png");
   } catch (error) {
     console.error(error);

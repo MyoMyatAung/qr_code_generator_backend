@@ -133,7 +133,7 @@ export async function getQRByQrIdHandler(req: Request<GetQRByDocQrIdInput["param
     }
 
     if(!qr[0].status){
-      return errorResponse(res, HTTP_STATUS.NOT_FOUND, HTTP_MESSAGES.NOT_FOUND, {
+      return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
         message: "QR is paused!",
       });
     }
