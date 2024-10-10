@@ -6,7 +6,7 @@ import adminRouter from "./routers/admin.routes";
 import qrRouter from "./routers/qr.routes";
 import { getImgKeySchema } from "./schemas/img.schema";
 import { validateJson } from "./middlewares/validateResources";
-import { getMediaHandler, getQRHandler } from "./controllers/img.controller";
+import { downloadMediaHandler, downloadQRHandler, getMediaHandler, getQRHandler } from "./controllers/img.controller";
 
 function routes(app: Express) {
     app.get("/api/v1/health-check", (req: Request, res: Response) => {
@@ -15,6 +15,8 @@ function routes(app: Express) {
 
     app.get("/api/v1/qrcode/:key", validateJson(getImgKeySchema), getQRHandler);
     app.get("/api/v1/media/:key", validateJson(getImgKeySchema), getMediaHandler);
+    app.get("/api/v1/download/qr/:key", validateJson(getImgKeySchema), downloadQRHandler);
+    app.get("/api/v1/download/media/:key", validateJson(getImgKeySchema), downloadMediaHandler);
 
     app.use("/api/v1/auth", authRouter);
 

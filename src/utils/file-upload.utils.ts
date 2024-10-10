@@ -7,6 +7,7 @@ import {
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { DefaultConfig } from "../libs";
+import { Readable } from "stream";
 
 export type UploadParams = {
   Bucket: string;
@@ -71,6 +72,23 @@ export const getImage = async (key: string, bucket: string) => {
   } catch (err) {
     throw err;
   }
+};
+
+// Helper function to stream the file from S3
+export const getFileStreamFromS3 = async (key: string, bucket: string) => {
+  const bucketParams = {
+    Bucket: config.get<string>(bucket),
+    Key: key,
+  };
+
+  const command = new GetObjectCommand(bucketParams);
+  const { Body } = await s3Client.send(command);
+
+  if (Body instanceof Readable) {
+    return Body; // Return the stream of the file
+  }
+
+  throw new Error('Unable to read file from S3');
 };
 
 export default upload;
