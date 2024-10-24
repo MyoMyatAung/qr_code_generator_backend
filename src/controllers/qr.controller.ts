@@ -134,7 +134,7 @@ export async function getQRByQrIdHandler(req: Request<GetQRByDocQrIdInput["param
 
     if(!qr[0].status){
       return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
-        message: "QR is paused!",
+        message: "Your QR is invalid",
       });
     }
 
@@ -213,7 +213,7 @@ export async function scanQRHandler(req: Request<ScanQRInput["params"]>, res: Re
 
     if (!qrs.length) {
       return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
-        message: "Invalid QR!",
+        message: "Your QR Is Invalid",
       });
     }
 
@@ -221,7 +221,7 @@ export async function scanQRHandler(req: Request<ScanQRInput["params"]>, res: Re
 
     if(!qr.status) {
       return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
-        message: "Invalid QR!",
+        message: "Your QR Is Invalid",
       });
     }
 
