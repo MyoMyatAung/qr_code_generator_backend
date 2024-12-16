@@ -6,9 +6,9 @@ import { createAdminHandler, deleteAdminHandler, getAdminByIdHandler, getAdminHa
 const adminRouter = Router();
 
 adminRouter.get('/', validateFormData(getAdminQuerySchema), getAdminHandler);
-adminRouter.get('/:id', validateJson(getAdminByIdSchema), getAdminByIdHandler);
+adminRouter.get('/:_id', validateJson(getAdminByIdSchema), getAdminByIdHandler);
 adminRouter.post('/', validateJson(createAdminSchema), createAdminHandler);
-adminRouter.put('/:id', validateJson(updateAdminSchema), updateAdminHandler);
-adminRouter.delete('/:id', validateJson(deleteAdminSchema), deleteAdminHandler);
+adminRouter.put('/:_id', validateJson(updateAdminSchema), updateAdminHandler);
+adminRouter.delete('/:_id', validateJson(deleteAdminSchema), deleteAdminHandler);
 
 export default adminRouter;
