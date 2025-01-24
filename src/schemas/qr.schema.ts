@@ -6,6 +6,7 @@ import {
   qrTypeValidator,
   usernameValidator,
 } from "./common.schema";
+import {SocialType} from "../libs";
 
 const params = object({
   _id: string({ required_error: "qr id is required" }),
@@ -36,6 +37,29 @@ const body = {
         company: string({ required_error: "company is required" }),
         title: string({ required_error: "title is required" }),
         description: string({ required_error: "description is required" }),
+      }),
+      object({
+        title: string({ required_error: "title is required" }),
+        description: string({ required_error: "description is required" }),
+        socialMedia: z.array(
+          object({
+            text: string({ required_error: "text is required" }),
+            url: string({ required_error: "url is required" }),
+            type: z.enum([
+                SocialType.WEBSITE,
+                SocialType.FACEBOOK,
+                SocialType.X,
+                SocialType.INSTAGRAM,
+                SocialType.LINKEDIN,
+                SocialType.MESSENGER,
+                SocialType.TELEGRAM,
+                SocialType.TIKTOK,
+                SocialType.TWITTER,
+                SocialType.WHATSAPP,
+                SocialType.YOUTUBE,
+            ], { required_error: "qr type is required" }),
+          })
+        ).min(1, { message: "social media must have at least 1 item"}),
       })
     ]),
   }),

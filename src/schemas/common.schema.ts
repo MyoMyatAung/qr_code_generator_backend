@@ -1,4 +1,4 @@
-import { array, date, number, string, z } from "zod";
+import { string, z } from "zod";
 import { QRType } from "../libs";
 
 export const usernameValidator = string({ required_error: "Username is required" })
@@ -22,4 +22,4 @@ export const passwordValidator = string({ required_error: "Password is required"
     .regex(/[0-9]/, "Password must contain at least one number")
     .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
 
-export const qrTypeValidator = z.enum([QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.WEBSITE], { required_error: "qr type is required" });
+export const qrTypeValidator = z.enum([QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.WEBSITE, QRType.SOCIAL], { required_error: "qr type is required" });

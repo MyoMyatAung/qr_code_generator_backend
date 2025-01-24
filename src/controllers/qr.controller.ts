@@ -8,7 +8,7 @@ import { QRDoc, QRInput } from "../models/qr.model";
 import config from "config";
 import { generateQRCode } from "../utils/index.utils";
 import generateUniqueID from "../utils/nanoid.utils";
-import { isEmployee, isMedia } from "../utils/typeGuards.utils";
+import {isEmployee, isMedia, isSocial} from "../utils/typeGuards.utils";
 import { deleteFromS3, uploadToS3 } from "../utils/qr.utils";
 
 /**
@@ -40,7 +40,7 @@ export async function createQRHandler(req: Request<{}, {}, CreateQRInput["body"]
       qrId,
     };
 
-    if ([QRType.IMAGE, QRType.PDF, QRType.V_CARD].includes(req.body.type) && !req.file) {
+    if ([QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.SOCIAL].includes(req.body.type) && !req.file) {
       return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
         message: "File Required",
       });
@@ -58,7 +58,7 @@ export async function createQRHandler(req: Request<{}, {}, CreateQRInput["body"]
           message: "Error in uploading Media",
         });
       }
-      if (isEmployee(req.body.data) || isMedia(req.body.data)) {
+      if (isEmployee(req.body.data) || isMedia(req.body.data) || isSocial(req.body.data)) {
         createPayload.data = { ...req.body.data, media: { url: media.url, key: media.key } };
       } else {
         return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
@@ -167,8 +167,8 @@ export async function updateQRHandler(req: Request<UpdateQRInput["params"], {}, 
       await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), existingQr.data.media?.key as string);
     }
 
-    if ([QRType.IMAGE, QRType.PDF, QRType.V_CARD].includes(req.body.type) && req.file) {
-      if (isMedia(existingQr.data) || isEmployee(existingQr.data)) {
+    if ([QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.SOCIAL].includes(req.body.type) && req.file) {
+      if (isMedia(existingQr.data) || isEmployee(existingQr.data) || isSocial(existingQr.data)) {
         await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), existingQr.data.media?.key as string);
       }
 
@@ -183,7 +183,7 @@ export async function updateQRHandler(req: Request<UpdateQRInput["params"], {}, 
           message: "Error in uploading Media",
         });
       }
-      if (isMedia(updateQrPayload.data) || isEmployee(updateQrPayload.data)) {
+      if (isMedia(updateQrPayload.data) || isEmployee(updateQrPayload.data) || isSocial(updateQrPayload.data)) {
         updateQrPayload.data.media = { key: uploadedMedia.key, url: uploadedMedia.url };
       }
     }
@@ -293,6 +293,12 @@ export async function deleteQRHandler(req: Request<DeleteQRInput["params"]>, res
       return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
         message: "Invalid QR",
       });
+    }
+    // Delete QR Code
+    await deleteFromS3(config.get<string>(DefaultConfig.QR_BUCKET), deletedQR.qrcode.key);
+    // Delete Media File
+    if ([QRType.WEBSITE, QRType.V_CARD].includes(deletedQR.type) && isMedia(deletedQR.data)) {
+      await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), deletedQR.data.media?.key as string);
     }
     return successResponse<QRDoc>(res, HTTP_STATUS.OK, HTTP_MESSAGES.OK, {}, deletedQR);
   } catch (error) {

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { QRType } from "../libs";
+import {QRType, SocialType} from "../libs";
 import { AdminDocument } from "./admin.model";
 
 export interface QRInput {
@@ -10,9 +10,25 @@ export interface QRInput {
     url: string;
     key: string;
   };
-  data: string | Employee | Media;
+  data: string | Employee | Media | Social;
   createdBy: AdminDocument["_id"];
   updatedBy: AdminDocument["_id"];
+}
+
+export interface SocialMedia {
+    text: string;
+    url: string;
+    type: SocialType;
+}
+
+export interface Social {
+    title: string;
+    description: string;
+    media?: {
+        url: string;
+        key: string;
+    },
+    socialMedia: SocialMedia[];
 }
 
 export interface Employee {
@@ -73,7 +89,7 @@ const qrSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: [QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.WEBSITE],
+      enum: [QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.WEBSITE, QRType.SOCIAL],
       required: true,
     },
     qrcode: qrcodeSchema,

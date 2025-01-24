@@ -74,5 +74,20 @@ export enum QRType {
     WEBSITE = "WEBSITE",
     V_CARD = "V_CARD",
     PDF = "PDF",
-    IMAGE = "IMAGE"
+    IMAGE = "IMAGE",
+    SOCIAL = "SOCIAL"
+}
+
+export enum SocialType {
+    WEBSITE = "WEBSITE",
+    FACEBOOK = "FACEBOOK",
+    X = "X",
+    TWITTER = "TWITTER",
+    INSTAGRAM = "INSTAGRAM",
+    WHATSAPP = "WHATSAPP",
+    TIKTOK = "TIKTOK",
+    YOUTUBE = "YOUTUBE",
+    TELEGRAM = "TELEGRAM",
+    MESSENGER = "MESSENGER",
+    LINKEDIN = "LINKEDIN",
 }
