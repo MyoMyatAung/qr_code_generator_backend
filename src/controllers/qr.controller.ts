@@ -82,10 +82,13 @@ export async function createQRHandler(req: Request<{}, {}, CreateQRInput["body"]
  */
 export async function getQRHandler(req: Request<{}, {}, {}, GetQRQueryInput["filter"] & GetQRQueryInput["paginate"]>, res: Response): Promise<Response<any>> {
   try {
-    const { page = 1, limit = 10, ...filter } = req.query;
+    const { page = 1, limit = 10, qrName, ...filter } = req.query;
     const skip = (page - 1) * limit;
-    const qrs = await findQRs(filter, {}, { skip, limit });
-    const total = await countQR(filter);
+
+    // Build the text search query
+    const searchQuery = qrName ? { $text: { $search: qrName } } : {};
+    const qrs = await findQRs({...filter, ...searchQuery}, {}, { skip, limit });
+    const total = await countQR({ ...filter, ...searchQuery });
     const totalPage = Math.ceil(total / limit);
 
     return successResponse<Array<QRDoc>>(res, HTTP_STATUS.OK, HTTP_MESSAGES.OK, { page, limit, total, totalPage }, qrs);

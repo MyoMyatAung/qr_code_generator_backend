@@ -11,7 +11,7 @@ export async function createQR(input: QRInput): Promise<QRDoc> {
 }
 
 export async function countQR(query?: FilterQuery<QRDoc>): Promise<number> {
-  return await QRModel.countDocuments(query);
+  return QRModel.countDocuments(query);
 }
 
 export async function findQRs(query?: FilterQuery<QRDoc>, projection?: ProjectionFields<QRDoc>, options: QueryOptions = { lean: true }): Promise<Array<QRDoc>> {

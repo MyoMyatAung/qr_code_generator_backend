@@ -110,7 +110,7 @@ const qrSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+qrSchema.index({ qrName: "text" });
 const QRModel = mongoose.model<QRDoc>("QR", qrSchema);
 
 export default QRModel;
