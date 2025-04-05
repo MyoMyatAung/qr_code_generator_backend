@@ -57,6 +57,7 @@ const body = {
                 SocialType.TWITTER,
                 SocialType.WHATSAPP,
                 SocialType.YOUTUBE,
+                SocialType.VIBER,
             ], { required_error: "qr type is required" }),
           })
         ).min(1, { message: "social media must have at least 1 item"}),

@@ -90,4 +90,5 @@ export enum SocialType {
     TELEGRAM = "TELEGRAM",
     MESSENGER = "MESSENGER",
     LINKEDIN = "LINKEDIN",
+    VIBER = "VIBER",
 }
