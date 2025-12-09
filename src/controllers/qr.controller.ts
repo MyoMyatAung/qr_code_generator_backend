@@ -324,8 +324,12 @@ export async function deleteQRHandler(req: Request<DeleteQRInput["params"]>, res
     // Delete QR Code
     await deleteFromS3(config.get<string>(DefaultConfig.QR_BUCKET), deletedQR.qrcode.key);
     // Delete Media File
-    if ([QRType.WEBSITE, QRType.V_CARD].includes(deletedQR.type) && isMedia(deletedQR.data)) {
-      await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), deletedQR.data.media?.key as string);
+    if ([QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.SOCIAL].includes(deletedQR.type)) {
+      if (isMedia(deletedQR.data) || isEmployee(deletedQR.data) || isSocial(deletedQR.data)) {
+        if (deletedQR.data.media?.key) {
+          await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), deletedQR.data.media.key);
+        }
+      }
     }
     return successResponse<QRDoc>(res, HTTP_STATUS.OK, HTTP_MESSAGES.OK, {}, deletedQR);
   } catch (error) {
