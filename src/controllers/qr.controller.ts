@@ -166,28 +166,52 @@ export async function updateQRHandler(req: Request<UpdateQRInput["params"], {}, 
     const existingQr = existingQrs[0];
     const updateQrPayload = { ...existingQr, ...req.body };
 
-    if ([QRType.WEBSITE, QRType.V_CARD].includes(req.body.type) && isMedia(existingQr.data)) {
-      await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), existingQr.data.media?.key as string);
+    // Check if old type had media but new type doesn't need it
+    const oldTypeHasMedia = [QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.SOCIAL].includes(existingQr.type);
+    const newTypeNeedsMedia = [QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.SOCIAL].includes(req.body.type);
+
+    // If changing from a type with media to a type without media, delete the old media
+    if (oldTypeHasMedia && !newTypeNeedsMedia) {
+      if (isMedia(existingQr.data) || isEmployee(existingQr.data) || isSocial(existingQr.data)) {
+        if (existingQr.data.media?.key) {
+          await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), existingQr.data.media.key);
+        }
+      }
     }
 
-    if ([QRType.IMAGE, QRType.PDF, QRType.V_CARD, QRType.SOCIAL].includes(req.body.type) && req.file) {
-      if (isMedia(existingQr.data) || isEmployee(existingQr.data) || isSocial(existingQr.data)) {
-        await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), existingQr.data.media?.key as string);
-      }
-
-      const uploadedMedia = await uploadToS3(
-        config.get<string>(DefaultConfig.QR_MEIDA_BUCKET),
-        req.file.originalname,
-        req.file.buffer,
-        req.body.type === QRType.PDF ? "application/pdf" : "image/png"
-      );
-      if (!uploadedMedia.success || !uploadedMedia.key || !uploadedMedia.url) {
-        return errorResponse(res, HTTP_STATUS.INTERNAL_SERVER_ERROR, HTTP_MESSAGES.INTERNAL_SERVER_ERROR, {
-          message: "Error in uploading Media",
+    // If new type needs media
+    if (newTypeNeedsMedia) {
+      // Check if file is required (no existing media or changing type)
+      const hasExistingMedia = oldTypeHasMedia && (isMedia(existingQr.data) || isEmployee(existingQr.data) || isSocial(existingQr.data)) && existingQr.data.media;
+      
+      if (!req.file && !hasExistingMedia) {
+        return errorResponse(res, HTTP_STATUS.BAD_REQUEST, HTTP_MESSAGES.BAD_REQUEST, {
+          message: "File Required",
         });
       }
-      if (isMedia(updateQrPayload.data) || isEmployee(updateQrPayload.data) || isSocial(updateQrPayload.data)) {
-        updateQrPayload.data.media = { key: uploadedMedia.key, url: uploadedMedia.url };
+
+      // If a new file is provided, delete old media and upload new one
+      if (req.file) {
+        if (isMedia(existingQr.data) || isEmployee(existingQr.data) || isSocial(existingQr.data)) {
+          if (existingQr.data.media?.key) {
+            await deleteFromS3(config.get<string>(DefaultConfig.QR_MEIDA_BUCKET), existingQr.data.media.key);
+          }
+        }
+
+        const uploadedMedia = await uploadToS3(
+          config.get<string>(DefaultConfig.QR_MEIDA_BUCKET),
+          req.file.originalname,
+          req.file.buffer,
+          req.body.type === QRType.PDF ? "application/pdf" : "image/png"
+        );
+        if (!uploadedMedia.success || !uploadedMedia.key || !uploadedMedia.url) {
+          return errorResponse(res, HTTP_STATUS.INTERNAL_SERVER_ERROR, HTTP_MESSAGES.INTERNAL_SERVER_ERROR, {
+            message: "Error in uploading Media",
+          });
+        }
+        if (isMedia(updateQrPayload.data) || isEmployee(updateQrPayload.data) || isSocial(updateQrPayload.data)) {
+          updateQrPayload.data.media = { key: uploadedMedia.key, url: uploadedMedia.url };
+        }
       }
     }
     const updatedQR = await updateQR(req.params, { ...updateQrPayload, updatedBy: res.locals.user._id });
